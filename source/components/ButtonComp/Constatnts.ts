@@ -1,7 +1,7 @@
 import { PressableAndroidRippleConfig } from "react-native"
 
 const android_ripple = {
-    RIPPLE_BTNr: ({ }): PressableAndroidRippleConfig => { return { color: 'black', borderless: true, foreground: true } }
+    RIPPLE_BTNr: ({ color = 'black', borderless = false, foreground = false, radius = undefined }: PressableAndroidRippleConfig): PressableAndroidRippleConfig => { return { color, borderless, foreground, radius } }
 }
 
 
