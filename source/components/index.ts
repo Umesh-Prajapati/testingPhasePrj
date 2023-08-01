@@ -1,3 +1,5 @@
-import Button from "./ButtonComp/ButtonComp"
+import Button, { ButtonType } from "./ButtonComp"
 
 export { Button }
+
+export type { ButtonType }

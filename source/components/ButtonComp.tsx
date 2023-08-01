@@ -1,12 +1,40 @@
-import { TouchableOpacity, Pressable, Platform, Animated, TouchableWithoutFeedback } from 'react-native'
+import { TouchableOpacity, Pressable, Platform, Animated, TouchableWithoutFeedback, TextStyle, ViewStyle, PressableAndroidRippleConfig } from 'react-native'
 import React, { ReactNode } from 'react'
-import { _COL, android_ripple } from './Constatnts';
-import { ButtonType } from './BtnType';
+
+export type ButtonType = {
+  children?: React.ReactNode;
+  text?: string | undefined;
+  textSty?: TextStyle;
+  onP?: () => void;
+  disabled?: boolean;
+  cSty?: ViewStyle;
+  mSty?: ViewStyle;
+  animated?: boolean;
+  hitSlop?: number;
+  btnType?: 'pressable' | 'touchable' | 'withoutTouchable';
+  androidRipple?: PressableAndroidRippleConfig;
+};
 
 const ButtonComp = ({ cSty, mSty,
   children,
-  btnType = 'pressable', androidRipple = { borderless: true, color: _COL.BLACK01, foreground: true },
+  btnType = 'pressable', androidRipple = { borderless: true, color: `rgba(0,0,0,.1)`, foreground: true },
   disabled, hitSlop, onP, text, textSty }: ButtonType) => {
+
+  const pressable = (child: ReactNode) => <Pressable
+    onPress={onP}
+    disabled={disabled ? disabled : onP ? false : true}
+    android_ripple={androidRipple}
+    hitSlop={hitSlop || 2}
+    pressRetentionOffset={15}
+    style={({ pressed }) => {
+      return [{
+        backgroundColor: Platform.OS === "ios" ? (pressed ? cSty?.backgroundColor || `rgba(0,0,0,.05)` : cSty?.backgroundColor || 'transparent') : cSty?.backgroundColor || 'transparent',
+        opacity: disabled ? 0.3 : Platform.OS === "ios" ? pressed ? .75 : 1 : 1,
+        borderRadius: cSty?.borderRadius,
+        overflow: 'hidden',
+        width: cSty?.width
+      }];
+    }}>{child}</Pressable>;
 
   const touchable = (child: ReactNode) => (<TouchableOpacity
     onPress={onP}
@@ -17,22 +45,6 @@ const ButtonComp = ({ cSty, mSty,
       overflow: cSty?.overflow || undefined
     }}>
     {child}</TouchableOpacity>);
-
-  const pressable = (child: ReactNode) => <Pressable
-    onPress={onP}
-    disabled={disabled ? disabled : onP ? false : true}
-    android_ripple={android_ripple.RIPPLE_BTNr(androidRipple)}
-    hitSlop={hitSlop || 2}
-    pressRetentionOffset={15}
-    style={({ pressed }) => {
-      return [{
-        backgroundColor: Platform.OS === "ios" ? (pressed ? cSty?.backgroundColor || _COL.BLACK005 : cSty?.backgroundColor || _COL.TRANSPARENT) : cSty?.backgroundColor || _COL.TRANSPARENT,
-        opacity: disabled ? 0.3 : Platform.OS === "ios" ? pressed ? .75 : 1 : 1,
-        borderRadius: cSty?.borderRadius,
-        overflow: 'hidden',
-        width: cSty?.width
-      }];
-    }}>{child}</Pressable>;
 
   const withoutTouchable = (child: ReactNode) => <TouchableWithoutFeedback
     onPress={onP}
